@@ -31,10 +31,11 @@ const createUserValidation = (data) => {
       .required('El email es necesario'),
     password: yup
       .string('La contraseña debe de ser una cadena de texto')
-      .matches(
+      /* Esto valida la contraseña
+			.matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)([A-Za-z\d]|[^ ]){8,15}$/,
         'La contraseña debe tener al menos 8 caracteres, al menos una mayúsculas y una cifra'
-      )
+      )*/
       .required('La contraseña es necesaria'),
   });
   schema.validateSync(data);

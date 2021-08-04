@@ -10,7 +10,7 @@ const usersRouter = require('./routes/users');
 const dishesRouter = require('./routes/dishes');
 
 // Importamos middlewares (errors)
-const { errorMiddleware } = require('./middleware/errors');
+const { errorMiddleware } = require('./middleware/errors/errors');
 
 // Configuración Express
 const app = express();
