@@ -1,7 +1,7 @@
 // Variables de entorno
 require('dotenv').config();
-
 const express = require('express');
+//const fileUpload = require('express-fileupload');
 const cors = require('cors');
 const { connectDB } = require('./utils/dbConnection');
 
@@ -18,6 +18,8 @@ const port = 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+//app.use(fileUpload({ createParentPath: true }));
+
 // Coger errores fuera de express
 process.on('uncaughtException', (error) => {
   console.log(error);
@@ -31,6 +33,7 @@ app.use(cors());
 
 // Dividimos peticiones a las Routes
 app.use('/users', usersRouter);
+app.use('/dishes', dishesRouter);
 
 app.use(errorMiddleware);
 

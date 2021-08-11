@@ -9,6 +9,7 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   accountVerificated: { type: Boolean, default: false, required: true },
   codeVerificationAccount: { type: String, required: true },
+  creationDate: { type: Date, default: Date.now, required: true },
 });
 
 module.exports = mongoose.model('User', UserSchema);
