@@ -6,7 +6,10 @@ const { encryptPassword, validatePassword } = require('../utils/encrypt.js');
 const { getToken } = require('../utils/tokens.js');
 const { sendWelcomeMail } = require('../utils/mailer');
 
-const createUser = catchAsyncErrors(async (req, res) => {
+/* -----------------------------------*/
+/* ------ CREATE USER - SIGN IN ------*/
+/* -----------------------------------*/
+export const createUser = catchAsyncErrors(async (req, res) => {
   const { name, surname, email, password } = req.body;
 
   //Verificamos si el email ya esta registrado
@@ -43,11 +46,52 @@ const createUser = catchAsyncErrors(async (req, res) => {
     profile: {
       id: createdUser.id,
       name: createdUser.name,
+      surname: createdUser.surname,
+      email: createdUser.email,
     },
   });
 });
 
-const checkEmailUser = catchAsyncErrors(async (req, res) => {
+/* ----------------------------------*/
+/* ------ LOGIN USER - LOG IN -------*/
+/* ----------------------------------*/
+
+export const logInUser = async (req, res) => {
+  const { email, password } = req.body;
+  const userFinded = await User.findOne({ email: email });
+  if (!userFinded) {
+    return res.state(400).json({
+      status: 'error',
+      name: 'EmailDoesNotExist',
+      user: 'There are no users with this email',
+    });
+  }
+
+  if (await validatePassword(password, userFinded.password)) {
+    const userToken = getToken(userFinded.id);
+    return res.status(201).json({
+      token: userToken,
+      profile: {
+        id: userFinded.id,
+        name: userFinded.name,
+        surname: userFinded.surname,
+        email: userFinded.email,
+      },
+    });
+  }
+
+  res.status(400).json({
+    status: 'error',
+    name: 'PasswordWrong',
+    user: 'Password is wrong',
+  });
+};
+
+/* -------------------------------------------*/
+/* ------ CHECK THE EMAIL IS AVAILABLE -------*/
+/* -------------------------------------------*/
+
+export const checkEmailUser = catchAsyncErrors(async (req, res) => {
   const isEmailUsed = await verifyIfExist('email', req.body.email);
   if (isEmailUsed === true) {
     return res.status(400).json({
@@ -63,13 +107,7 @@ const checkEmailUser = catchAsyncErrors(async (req, res) => {
 });
 
 // f para verificar si existe algo en la db
-const verifyIfExist = async (data, dataValue) => {
+export const verifyIfExist = async (data, dataValue) => {
   const dataFinded = await User.exists({ [data]: [dataValue] });
   return dataFinded;
-};
-
-module.exports = {
-  createUser,
-  verifyIfExist,
-  checkEmailUser,
 };
