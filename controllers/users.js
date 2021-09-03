@@ -6,6 +6,10 @@ const { encryptPassword, validatePassword } = require('../utils/encrypt.js');
 const { getToken } = require('../utils/tokens.js');
 const { sendWelcomeMail } = require('../utils/mailer');
 
+/* ----------------------------------- */
+/* ------ CREATE USER - SIGN IN ------ */
+/* ----------------------------------- */
+
 const createUser = catchAsyncErrors(async (req, res) => {
   const { name, surname, email, password } = req.body;
 
@@ -43,9 +47,50 @@ const createUser = catchAsyncErrors(async (req, res) => {
     profile: {
       id: createdUser.id,
       name: createdUser.name,
+      surname: createdUser.surname,
+      email: createdUser.email,
     },
   });
 });
+
+/* ----------------------------------*/
+/* ------ LOGIN USER - LOG IN -------*/
+/* ----------------------------------*/
+
+const logInUser = async (req, res) => {
+  const { email, password } = req.body;
+  const userFinded = await User.findOne({ email: email });
+  if (!userFinded) {
+    return res.state(400).json({
+      status: 'error',
+      name: 'EmailDoesNotExist',
+      user: 'There are no users with this email',
+    });
+  }
+
+  if (await validatePassword(password, userFinded.password)) {
+    const userToken = getToken(userFinded.id);
+    return res.status(201).json({
+      token: userToken,
+      profile: {
+        id: userFinded.id,
+        name: userFinded.name,
+        surname: userFinded.surname,
+        email: userFinded.email,
+      },
+    });
+  }
+
+  res.status(400).json({
+    status: 'error',
+    name: 'PasswordWrong',
+    user: 'Password is wrong',
+  });
+};
+
+/* -------------------------------------------*/
+/* ------ CHECK THE EMAIL IS AVAILABLE -------*/
+/* -------------------------------------------*/
 
 const checkEmailUser = catchAsyncErrors(async (req, res) => {
   const isEmailUsed = await verifyIfExist('email', req.body.email);
@@ -70,6 +115,6 @@ const verifyIfExist = async (data, dataValue) => {
 
 module.exports = {
   createUser,
-  verifyIfExist,
+  logInUser,
   checkEmailUser,
 };

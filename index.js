@@ -31,6 +31,7 @@ app.use(cors());
 
 // Dividimos peticiones a las Routes
 app.use('/users', usersRouter);
+app.use('/dishes', dishesRouter);
 
 app.use(errorMiddleware);
 
