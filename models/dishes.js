@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   seller: { type: Schema.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
-  portion: { type: Number, required: true },
+  portion: { type: String, required: true },
   description: { type: String, required: true },
   image: { type: String, required: true },
   ingredients: { type: String, require: true },
