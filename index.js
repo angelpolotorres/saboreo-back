@@ -14,7 +14,7 @@ const { errorMiddleware } = require('./middleware/errors/errors');
 
 // Configuración Express
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -36,6 +36,6 @@ app.use('/dishes', dishesRouter);
 app.use(errorMiddleware);
 
 // Config Express puerto
-app.listen(port, () => {
-  console.log(`Servidor funcionando en http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Servidor funcionando en http://localhost:${PORT}`);
 });
