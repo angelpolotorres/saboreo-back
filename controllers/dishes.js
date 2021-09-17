@@ -1,45 +1,60 @@
 const Dish = require('../models/dishes');
+const { verifyToken } = require('../utils/tokens');
 const { catchAsyncErrors } = require('../middleware/errors/errors');
+const { verify } = require('jsonwebtoken');
 
 /* --------------------------------------*/
 /* ------ CREATE DISH WITH PICTURE ------*/
 /* --------------------------------------*/
 
 const createDish = catchAsyncErrors(async (req, res) => {
-  const {
-    seller,
-    name,
-    portion,
-    description,
-    image,
-    ingredients,
-    allergens,
-    vegan,
-    glutenFree,
-  } = req.body;
+  if (verifyToken(req.headers.token)) {
+    const {
+      seller,
+      name,
+      portion,
+      description,
+      image,
+      ingredients,
+      allergens,
+      vegan,
+      glutenFree,
+      price,
+    } = req.body;
 
-  const newDish = new Dish({
-    seller,
-    name,
-    portion,
-    description,
-    image,
-    ingredients,
-    allergens,
-    vegan,
-    glutenFree,
-  });
+    const numberPrice = Number(price.replace(',', '.'));
 
-  newDish.save();
+    const newDish = new Dish({
+      seller,
+      name,
+      portion,
+      description,
+      image,
+      ingredients,
+      allergens,
+      vegan,
+      glutenFree,
+      price: numberPrice,
+    });
 
-  res.status(201).json({
-    status: 'ok',
-    name: 'dish created',
-  });
+    newDish.save();
+
+    res.status(201).json({
+      status: 'ok',
+      name: 'dish created',
+    });
+  } else {
+    res.status(401).json({
+      status: 'error',
+      name: 'Unauthorized',
+    });
+  }
 });
 
 const showDish = (req, res) => {
   console.log(req.body);
+  console.log(verifyToken(req.headers.token));
+
   res.status(201).json({
     status: 'ok',
     name: 'dish created',

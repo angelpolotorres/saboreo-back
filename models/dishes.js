@@ -12,6 +12,7 @@ const UserSchema = new Schema({
   allergens: { type: String, require: true },
   vegan: { type: String, require: true },
   glutenFree: { type: Boolean, require: true },
+  price: { type: Number, require: true },
 });
 
 module.exports = mongoose.model('Dish', UserSchema);
